@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/resources/auth_methods.dart';
+import 'package:flutter_application_1/screens/main_landing_page.dart';
 import 'package:flutter_application_1/screens/signup_screen.dart';
 import 'package:flutter_application_1/utils/colors.dart';
+import 'package:flutter_application_1/utils/utils.dart';
 import 'package:flutter_application_1/widgets/text_field_input.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -30,6 +33,18 @@ class _LoginScreenState extends State<LoginScreen> {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  void loginUser() async {
+    String? res = await AuthMethods().loginUser(
+        email: _emailController.text, password: _passwordController.text);
+
+    if (res == "success") {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => const LandingPage()));
+    } else {
+      showSnackBar(res!, context);
+    }
   }
 
   @override
@@ -73,7 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
               // button for login
               ElevatedButton(
-                onPressed: _handleLogin,
+                onPressed: loginUser,
                 child: const Text('Log in'),
               ),
 
@@ -92,7 +107,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: ((context) => SignupScreen())));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: ((context) => SignupScreen())));
                     },
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 8),
