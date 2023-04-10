@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/resources/auth_methods.dart';
 import 'package:flutter_application_1/screens/login_screeen.dart';
 import 'package:flutter_application_1/utils/colors.dart';
+import 'package:flutter_application_1/utils/utils.dart';
 import 'package:flutter_application_1/widgets/text_field_input.dart';
 import '../utils/colors.dart';
 
@@ -112,13 +113,21 @@ class _SignupScreenState extends State<SignupScreen> {
                       email: _emailController.text,
                       password: _passwordController.text);
                   print(res);
+
+                  setState(() {
+                    _isLoading = true;
+                  });
+
+                  if (res != "success") {
+                    showSnackBar(res!, context);
+                  }
                 },
-
-
-                child: const Text('Sign up'),
+                child: _isLoading ? const Center(child: CircularProgressIndicator(
+                  color: Colors.white,
+                ),):
                 
+                const Text('Sign up'),
               ),
-              
 
               const SizedBox(height: 32),
 

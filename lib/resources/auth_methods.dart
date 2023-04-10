@@ -35,15 +35,28 @@ class AuthMethods {
         });
 
         res = "success";
-      }       
-    }
-    
-    catch (err) {
+      }
+    } catch (err) {
       res = err.toString();
     }
     return res;
   }
-} 
+}
+
+//logging user
+Future<String?> loginUser({
+  required String email,
+  required String password,
+}) async{
+  String res = "Some error occured";
+
+  try{
+
+  } catch(err){
+    
+  }
+}
+
 
   /* // Logging In User
     Future<String?> loginUser({
