@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/screens/donate_page.dart';
+import 'package:flutter_application_1/screens/recieve_page.dart';
 
 class LandingPage extends StatelessWidget {
   const LandingPage({Key? key}) : super(key: key);
@@ -71,7 +72,12 @@ class LandingPage extends StatelessWidget {
                       ),
                     ),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ReceivePage()));
+                      },
                       style: ElevatedButton.styleFrom(
                         minimumSize: const Size(150, 50),
                         backgroundColor: Colors.red,

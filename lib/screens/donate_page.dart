@@ -1,5 +1,5 @@
-// ignore_for_file: library_private_types_in_public_api
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class DonatePage extends StatefulWidget {
@@ -78,6 +78,40 @@ class _DonatePageState extends State<DonatePage> {
     });
   }
 
+  void _submitDonations() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    final donationsRef = FirebaseFirestore.instance.collection('donations');
+    final items = _itemsList
+        .asMap()
+        .entries
+        .map((entry) {
+          final itemName = _itemNameControllers[entry.key].text.trim();
+          final quantity =
+              int.tryParse(_quantityControllers[entry.key].text.trim()) ?? 0;
+          if (itemName.isEmpty || quantity <= 0) return null;
+          return {
+            'itemName': itemName,
+            'quantity': quantity,
+          };
+        })
+        .where((item) => item != null)
+        .map((item) => item as Map<String, dynamic>)
+        .toList();
+
+    if (items.isEmpty) return;
+
+    await donationsRef.doc(user.uid).set({
+      'user': user.uid,
+      'items': items,
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+
+    // Navigate back to the main home page after submitting donations
+    Navigator.of(context).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -112,28 +146,7 @@ class _DonatePageState extends State<DonatePage> {
                 const SizedBox(width: 20),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {
-                      List<Map<String, dynamic>> items = [];
-                      for (int i = 0; i < _itemsList.length; i++) {
-                        TextEditingController itemNameController =
-                            _itemNameControllers[i];
-                        TextEditingController quantityController =
-                            _quantityControllers[i];
-
-                        String itemName = itemNameController.text;
-                        int quantity =
-                            int.tryParse(quantityController.text) ?? 0;
-
-                        if (itemName.isNotEmpty && quantity > 0) {
-                          items.add({
-                            'itemName': itemName,
-                            'quantity': quantity,
-                          });
-                        }
-                      }
-                      // ignore: todo
-                      // TODO: Implement storing inputted values and going back to the main home page
-                    },
+                    onPressed: _submitDonations,
                     style: ElevatedButton.styleFrom(
                       minimumSize: const Size(double.infinity, 50),
                       backgroundColor: Colors.red,
